@@ -3,6 +3,11 @@
         <button @click="count++">+</button>
         <button @click="count--">-</button>
         <span x-text="count"></span>
+
+        <!-- <div>
+            <span>inside of div</span>
+        </div> -->
+
     </div>
 
     <script>
@@ -10,6 +15,34 @@
         let root = document.querySelector('[x-data]')
 
         let data = getInitialData()
+
+        refreshDom()
+
+        function refreshDom() {
+            walkDom(root, el => {
+
+                // console.log(el.outerHTML)
+
+                if(el.hasAttribute('x-text')){
+                    let expression = el.getAttribute('x-text')
+                    el.innerText = eval(`with (data) { (${expression}) }`)
+                }
+            })
+        }
+
+        function walkDom(el, callback) {
+            callback(el)
+
+            el = el.firstElementChild
+
+            while(el){
+
+                walkDom(el, callback)
+                 
+                el = el.nextElementSibling
+
+            }
+        }
 
         function getInitialData() {
 
